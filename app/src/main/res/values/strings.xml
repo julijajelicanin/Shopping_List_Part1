@@ -21,4 +21,9 @@
     <string name="no">no</string>
     <string name="share_list">Share list:</string>
     <string name="save">SAVE</string>
+    <string name="naslov_lista">Naslov :</string>
+    <string name="shared">Shared :</string>
+    <string name="add">add</string>
+    <string name="hint_newtask">zadatak1</string>
+    <string name="placeholder">Nestoo</string>
 </resources>

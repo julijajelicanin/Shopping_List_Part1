@@ -7,8 +7,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class WelcomeActivity extends AppCompatActivity implements View.OnClickListener {
 Button button1;
@@ -45,6 +48,50 @@ AlertDialog.Builder dialog;
         button1.setOnClickListener(this);
 
 
+        //zadatak2
+        ListView lista=findViewById(R.id.list);
+        CustomAdapter adapter=new CustomAdapter(this);
+        lista.setAdapter(adapter);
+
+        //punimo adapter
+        adapter.addCharacter(new Character("Naslov1","true"));
+        adapter.addCharacter(new Character("Naslov2","true"));
+        adapter.addCharacter(new Character("Naslov3","false"));
+        adapter.addCharacter(new Character("Naslov4","false"));
+        adapter.addCharacter(new Character("Naslov5","true"));
+        adapter.addCharacter(new Character("Naslov6","true"));
+        adapter.addCharacter(new Character("Naslov7","true"));
+        adapter.addCharacter(new Character("Naslov8","true"));
+        adapter.addCharacter(new Character("Naslov9","true"));
+        adapter.addCharacter(new Character("Naslov10","false"));
+        adapter.addCharacter(new Character("Naslov11","true"));
+        adapter.addCharacter(new Character("Naslov12","false"));
+        adapter.addCharacter(new Character("Naslov13","true"));
+        adapter.addCharacter(new Character("Naslov14","false"));
+
+
+        lista.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                Character character=(Character)adapter.getItem(position);
+                adapter.removeCharacter(character);
+                return false;
+            }
+        });
+
+        lista.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent =new Intent(WelcomeActivity.this, ShowListActivity.class);
+                Bundle bundle=new Bundle();
+                Character character=(Character) adapter.getItem(position);
+                String name= character.getmName();
+                intent.putExtra("list_name_key",name);
+                startActivity(intent);
+            }
+
+        });
     }
 
     @Override
