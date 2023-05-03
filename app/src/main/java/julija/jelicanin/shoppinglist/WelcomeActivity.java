@@ -1,5 +1,6 @@
 package julija.jelicanin.shoppinglist;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -18,6 +19,13 @@ Button button1;
 Button button2;
 TextView tv1;
 AlertDialog.Builder dialog;
+DbHelper dbHelper;
+Bundle bundle;
+String value;
+String naslov;
+Boolean share;
+CustomAdapter adapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +36,54 @@ AlertDialog.Builder dialog;
         button1=findViewById(R.id.new_list_button);
         button2=findViewById(R.id.see_my_lists_button);
 
+        ListView lista=findViewById(R.id.list);
+        adapter=new CustomAdapter(this);
+        dbHelper=DbHelper.getInstance(this);
+
+        bundle = getIntent().getExtras();
+        if(bundle.containsKey("User")) {
+            value = bundle.getString("User");
+            tv1.append("-->/");
+            tv1.append(value);
+            tv1.append("/");
+        }
+
+        DBLists[] lists = dbHelper.readLists();
+        if(lists != null) {
+            for (DBLists list : lists) {
+                if (list.getmListCreator().equals(value) && !list.getmListShared()) {
+                    adapter.addCharacter(new Character(list.getmListName(), list.getmListShared()));
+                }
+                if (list.getmListShared()) {
+                    adapter.addCharacter(new Character(list.getmListName(), list.getmListShared()));
+                }
+            }
+        }
+
+        lista.setAdapter(adapter);
+
+        lista.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
+                Character character = (Character) adapter.getItem(position);
+                dbHelper.deleteListName(character.getmName());
+                adapter.removeCharacter(character);
+                return true;
+            }
+        });
+        lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                Intent intent = new Intent(WelcomeActivity.this, ShowListActivity.class);
+                Character element = (Character) adapter.getItem(position);
+
+                Bundle b = new Bundle();
+                b.putString("Naslov", element.getmName());
+                intent.putExtras(b);
+                startActivity(intent);
+            }
+        });
+
         dialog=new AlertDialog.Builder(this);
         dialog.setTitle("New List Dialog");
         dialog.setMessage("Are you sure you want to create new list?");
@@ -35,14 +91,25 @@ AlertDialog.Builder dialog;
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 Intent intent=new Intent(WelcomeActivity.this, NewListActivity.class);
-                startActivity(intent);
+                //startActivity(intent);
+
+                Bundle b = new Bundle();
+                b.putString("ListCreator", value);
+                intent.putExtras(b);
+                startActivityForResult(intent, 2);
+
             }
         });
         dialog.create();
-        button2.isEnabled();
+
+        button1.setOnClickListener(this);
+        button2.setOnClickListener(this);
+
+  /*      button2.isEnabled();
 
         Intent intent=getIntent();
-        String name=intent.getStringExtra("name_key");
+        //String name=intent.getStringExtra("name_key");
+        String name=intent.getStringExtra("User");
         tv1.setText(name);
 
         button1.setOnClickListener(this);
@@ -91,7 +158,7 @@ AlertDialog.Builder dialog;
                 startActivity(intent);
             }
 
-        });
+        });*/
     }
 
     @Override
@@ -100,5 +167,32 @@ AlertDialog.Builder dialog;
         {
             dialog.show();
         }
+        else if (view.getId() == R.id.see_my_lists_button) {
+            adapter.clear();
+            DBLists[] lists = dbHelper.readLists();
+            if(lists != null) {
+                for (DBLists list : lists) {
+                    if (list.getmListCreator().equals(value)) {
+                        adapter.addCharacter(new Character(list.getmListName(), list.getmListShared()));
+                    }
+                }
+            }
+        }
+
     }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(resultCode == 2 && requestCode == 2) {
+            Bundle b = new Bundle();
+            b = data.getExtras();
+            naslov = b.getString("NoviNaslov");
+            share = b.getBoolean("Shared");
+
+            Character noviElement = new Character(naslov, share);
+            adapter.addCharacter(noviElement);
+        }
+    }
+
 }

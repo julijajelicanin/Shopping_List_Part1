@@ -70,7 +70,7 @@ public class CustomAdapter extends BaseAdapter {
 
         Character c=(Character) getItem(position);
         viewHolder.textViewItem1.setText(c.getmName());
-        viewHolder.textViewItem2.setText(c.getmShared());
+        viewHolder.textViewItem2.setText(String.valueOf(c.getmShared()));
 
 
         return convertView;
@@ -86,4 +86,20 @@ public class CustomAdapter extends BaseAdapter {
         mCharacters.remove(c);
         notifyDataSetChanged();
     }
+    public void update(Character[] elements) {
+        mCharacters.clear();
+        if(elements != null) {
+            for(Character element : elements) {
+                mCharacters.add(element);
+            }
+        }
+
+        notifyDataSetChanged();
+    }
+
+    public void clear() {
+        mCharacters.clear();
+        notifyDataSetChanged();
+    }
+
 }

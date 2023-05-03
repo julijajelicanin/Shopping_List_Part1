@@ -3,6 +3,7 @@ package julija.jelicanin.shoppinglist;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,7 +46,7 @@ public class ShowListCustomAdapter extends BaseAdapter {
         return position;
     }
 
-    private class ViewHolder{
+    public class ViewHolder{
 
         TextView textViewItem;
         CheckBox checkBoxItem;
@@ -77,16 +78,25 @@ public class ShowListCustomAdapter extends BaseAdapter {
         viewHolder.textViewItem.setText(c.getmName());
         //viewHolder.checkBoxItem.setChecked(c.ismCheck());
         //proveravam stanje checkBox-a
+
+        //Log.d("text","pocetak()"+c.getmName().toString());
+        //Log.d("text","pocetak()"+c.ismCheck());
         if(c.ismCheck())
         {
             viewHolder.textViewItem.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
             c.setmCheck(true);
+            //Log.d("text","if pre vh()"+c.getmName().toString());
+            //Log.d("text","if pre vh()"+c.ismCheck());
 
         }
         else {
             viewHolder.textViewItem.setPaintFlags(Paint.ANTI_ALIAS_FLAG);
             c.setmCheck(false);
+            //Log.d("text","else pre vh()"+c.getmName().toString());
+            //Log.d("text","els epre vh()"+c.ismCheck());
         }
+        //Log.d("text","van posle()"+c.getmName().toString());
+        //Log.d("text","van posle()"+c.ismCheck());
 
         //viewHolder.textViewItem.setText(c.getmName());
         //viewHolder.checkBoxItem.setChecked(c.ismCheck());
@@ -113,11 +123,17 @@ public class ShowListCustomAdapter extends BaseAdapter {
                 {
                     viewHolder.textViewItem.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
                     viewHolder.checkBoxItem.setChecked(true);
+                    c.setmCheck(true);
+                    //Log.d("text","viewh petlja if"+c.getmName().toString());
+                    //Log.d("text","viewh petlja if"+c.ismCheck());
 
                 }
                 else {
                     viewHolder.textViewItem.setPaintFlags(Paint.ANTI_ALIAS_FLAG);
                     viewHolder.checkBoxItem.setChecked(false);
+                    //Log.d("text","viewh petlja else"+c.getmName().toString());
+                    //Log.d("text","viewh petlja else"+c.ismCheck());
+                    c.setmCheck(false);
                 }
             }
         });
@@ -125,6 +141,7 @@ public class ShowListCustomAdapter extends BaseAdapter {
     }
     public void addCharacter(ShowListCharacter c)
     {
+        c.setmCheck(false);
         mCharacters.add(c);
         notifyDataSetChanged();
     }

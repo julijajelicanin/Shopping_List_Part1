@@ -14,6 +14,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button registerButton;
     LoginFragment loginFragment1;
     RegisterFragment registerFragment1;
+    DbHelper dbHelper;
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         loginButton.setOnClickListener(this);
         registerButton.setOnClickListener(this);
-
+        dbHelper = DbHelper.getInstance(this);
     }
 
     @Override
@@ -64,4 +66,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         .commit();
         }
         }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        loginButton.setVisibility(View.VISIBLE);
+        registerButton.setVisibility(View.VISIBLE);
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .hide(loginFragment1)
+                .addToBackStack(null)
+                .commit();
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .hide(registerFragment1)
+                .addToBackStack(null)
+                .commit();
     }
+
+}

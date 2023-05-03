@@ -1,15 +1,18 @@
 package julija.jelicanin.shoppinglist;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,6 +33,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
     EditText edit2;
     EditText edit3;
     Button button;
+    DbHelper dbHelper;
 
     public RegisterFragment() {
         // Required empty public constructor
@@ -78,16 +82,41 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
 
-        Intent intent=new Intent(getActivity(),WelcomeActivity.class);
+        /*Intent intent=new Intent(getActivity(),WelcomeActivity.class);
         //Bundle bundle=new Bundle();
 
         //bundle.putString("User",edit1.getText().toString());
         //intent.putExtras(bundle);
         String name=edit1.getText().toString();
         intent.putExtra("name_key",name);
+        startActivity(intent);*/
 
 
-        startActivity(intent);
+        if(edit1.getText().toString().trim().isEmpty() || edit2.getText().toString().isEmpty() || edit3.getText().toString().isEmpty())
+        {
+            Toast.makeText(getContext(), "Please fill in all the fields", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            dbHelper = DbHelper.getInstance(getContext());
+            if(dbHelper.readUser(edit1.getText().toString().trim())==null)
+            {
+                dbHelper.insert(new DBUser(edit1.getText().toString(), edit2.getText().toString(), edit3.getText().toString()));
+                Intent intent= new Intent(getActivity(),WelcomeActivity.class);
+
+                Bundle bundle=new Bundle();
+                bundle.putString("User", edit1.getText().toString());
+
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+            else {
+                Toast.makeText(getContext(), "Your username is already in use", Toast.LENGTH_SHORT).show();
+
+            }
+
+
+
+        }
 
     }
 }

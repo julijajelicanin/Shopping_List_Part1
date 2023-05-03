@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -32,6 +33,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     EditText edit2;
     Button button;
 
+    DbHelper dbHelper;
     public LoginFragment() {
         // Required empty public constructor
     }
@@ -72,13 +74,14 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         button=v.findViewById(R.id.login);
         edit1=v.findViewById(R.id.username_edit);
         edit2=v.findViewById(R.id.password_edit);
-         button.setOnClickListener(this);
+        button.setOnClickListener(this);
+
         return v;
 
     }
     public void onClick(View view){
 
-        if(edit1.getText().toString().trim().equals("admin") && edit2.getText().toString().equals("admin"))
+        /*if(edit1.getText().toString().trim().equals("admin") && edit2.getText().toString().equals("admin"))
         {
             Intent intent=new Intent(getActivity(),WelcomeActivity.class);
             Bundle bundle=new Bundle();
@@ -88,6 +91,29 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             //intent.putExtras(bundle);
 
             startActivity(intent);
+        }*/
+        if(edit1.getText().toString().trim().isEmpty() || edit2.getText().toString().isEmpty())
+        {
+            Toast.makeText(getContext(), "Please fill in all the fields", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            dbHelper =DbHelper.getInstance(getContext());
+            DBUser user =dbHelper.readUser(edit1.getText().toString());
+            if(user != null && user.getmPassword().equals(edit2.getText().toString()))
+            {
+                Intent intent=new Intent(getActivity(),WelcomeActivity.class);
+                Bundle bundle=new Bundle();
+
+                //String name=edit1.getText().toString();
+                //intent.putExtra("name_key",name);
+                bundle.putString("User", edit1.getText().toString().trim());
+                intent.putExtras(bundle);
+                Toast.makeText(getContext(), "Username and password match", Toast.LENGTH_SHORT).show();
+                startActivity(intent);
+            }
+            else {
+                Toast.makeText(getContext(), "Username and password do not match", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

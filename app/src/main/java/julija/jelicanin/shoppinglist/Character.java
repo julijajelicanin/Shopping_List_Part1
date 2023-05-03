@@ -2,9 +2,9 @@ package julija.jelicanin.shoppinglist;
 
 public class Character {
     private String mName;
-    private String mShared;
+    private  boolean mShared;
 
-    public Character(String mName, String mShared) {
+    public Character(String mName, boolean mShared) {
         this.mName = mName;
         this.mShared = mShared;
     }
@@ -13,7 +13,7 @@ public class Character {
         return mName;
     }
 
-    public String getmShared() {
+    public boolean getmShared() {
         return mShared;
     }
 
@@ -21,7 +21,8 @@ public class Character {
         this.mName = mName;
     }
 
-    public void setmShared(String mShared) {
+    public void setmShared(boolean mShared) {
         this.mShared = mShared;
     }
+
 }

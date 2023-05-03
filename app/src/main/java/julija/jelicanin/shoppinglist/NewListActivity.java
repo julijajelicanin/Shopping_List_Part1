@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class NewListActivity extends AppCompatActivity implements View.OnClickListener {
     Button saveButton;
@@ -18,6 +19,9 @@ public class NewListActivity extends AppCompatActivity implements View.OnClickLi
     TextView tv1;
     RadioButton radioYes;
     RadioButton radioNo;
+    DbHelper dbHelper;
+    String listCreator;
+
 
     @SuppressLint({"MissingInflatedId", "WrongViewCast"})
     @Override
@@ -31,6 +35,13 @@ public class NewListActivity extends AppCompatActivity implements View.OnClickLi
         okButton=findViewById(R.id.ok_button);
         edit1=findViewById(R.id.input_list_name);
         tv1=findViewById(R.id.list_name);
+
+
+        dbHelper = DbHelper.getInstance(this);
+        Bundle b = getIntent().getExtras();
+        listCreator = b.getString("ListCreator");
+
+
 
         saveButton.setOnClickListener(this);
         okButton.setOnClickListener(this);
@@ -53,7 +64,7 @@ public class NewListActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onClick(View view) {
-        if(view.getId()==R.id.save_button)
+        /*if(view.getId()==R.id.save_button)
         {
             Intent intent=new Intent(NewListActivity.this,WelcomeActivity.class);
             startActivity(intent);
@@ -62,7 +73,43 @@ public class NewListActivity extends AppCompatActivity implements View.OnClickLi
         {
             String listName=edit1.getText().toString();
             tv1.setText(listName);
+        }*/
+
+        if (view.getId() == R.id.ok_button) {
+            if (dbHelper.readList(edit1.getText().toString()) == null) {
+                Intent intent = new Intent();
+                Bundle bundle = new Bundle();
+                bundle.putString("NoviNaslov", edit1.getText().toString());
+
+                if (radioYes.isChecked()==false && radioNo.isChecked()==false) {
+                    Toast.makeText(this, "Please indicate whether the list will be shared or not!", Toast.LENGTH_SHORT).show();
+                } else if (radioYes.isChecked()) {
+                    bundle.putBoolean("Shared", true);
+                    intent.putExtras(bundle);
+                    dbHelper.insert(new DBLists(edit1.getText().toString(), listCreator, true));
+                    setResult(2, intent);
+                    finish();
+                } else {
+                    bundle.putBoolean("Shared", false);
+                    intent.putExtras(bundle);
+                    dbHelper.insert(new DBLists(edit1.getText().toString(), listCreator, false));
+                    setResult(2, intent);
+                    finish();
+                }
+            } else {
+                Toast.makeText(this, "Entered name of the list already exists in the database!", Toast.LENGTH_SHORT).show();
+            }
+        } else if (view.getId() == R.id.save_button) {
+            tv1.setText(edit1.getText().toString());
         }
 
+
     }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        setResult(4);
+        finish();
+    }
+
 }
