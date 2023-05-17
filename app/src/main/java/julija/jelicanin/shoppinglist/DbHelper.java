@@ -58,11 +58,11 @@ public class DbHelper extends SQLiteOpenHelper {
 
         db.execSQL("CREATE TABLE " + TABLE_NAME_TWO +
                 "(" + COLUMN_LIST_NAME + " TEXT, " + COLUMN_LIST_CREATOR + " TEXT, "
-                + COLUMN_LIST_STATUS + " INT);" );
+                + COLUMN_LIST_STATUS + " INTEGER);" );
 
         db.execSQL("CREATE TABLE " + TABLE_NAME_THREE +
                 "(" + COLUMN_ITEM_NAME + " TEXT, " + COLUMN_ITEM_LIST_NAME + " TEXT, "
-                 + COLUMN_ITEM_CHECKED + " INT, "+ COLUMN_ITEM_ID + " INT);" );
+                 + COLUMN_ITEM_CHECKED + " INTEGER, "+ COLUMN_ITEM_ID + " INTEGER);" );
     }
 
     @Override
@@ -196,6 +196,24 @@ public class DbHelper extends SQLiteOpenHelper {
         close();
         return list;
     }
+
+    public DBLists[] readList1() {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(TABLE_NAME_TWO, null, COLUMN_LIST_STATUS + " =?", new String[] {String.valueOf(1)}, null, null, null);
+
+        if (cursor.getCount() <= 0) {
+            return null;
+        }
+        DBLists[] lists = new DBLists[cursor.getCount()];
+        int i = 0;
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+            lists[i++] = createList(cursor);
+        }
+
+        close();
+        return lists;
+    }
+
     private DBLists createList(Cursor cursor) {
         String listName = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_LIST_NAME));
         String listCreator = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_LIST_CREATOR));
@@ -221,6 +239,19 @@ public class DbHelper extends SQLiteOpenHelper {
         close();
         return items;
     }
+    public void updateItem(DBItems item) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_LIST_NAME, item.getmItemListName());
+        values.put(COLUMN_ITEM_LIST_NAME, item.getmItemListName());
+        values.put(COLUMN_LIST_STATUS, item.ismItemChecked());
+        values.put(COLUMN_ITEM_ID, item.getmItemId());
+
+        db.update(TABLE_NAME_THREE, values, COLUMN_ITEM_ID + " =?", new String[] {String.valueOf(item.getmItemId())});
+        close();
+    }
+
     public DBItems readItem(String id) {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.query(TABLE_NAME_THREE, null, COLUMN_ITEM_ID + " =?", new String[] {id}, null, null, null);

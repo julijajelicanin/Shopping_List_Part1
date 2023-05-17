@@ -17,6 +17,7 @@ import java.util.ArrayList;
 public class ShowListCustomAdapter extends BaseAdapter {
     private ArrayList<ShowListCharacter> mCharacters;
     private Context mContext;
+    DbHelper dbHelper;
 
     public ShowListCustomAdapter(Context mContext) {
         mCharacters = new ArrayList<ShowListCharacter>();
@@ -56,6 +57,9 @@ public class ShowListCustomAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
 
         ShowListCustomAdapter.ViewHolder viewHolder;
+        dbHelper = DbHelper.getInstance(parent.getContext());
+
+
 
         if(convertView==null)
         {
@@ -74,6 +78,8 @@ public class ShowListCustomAdapter extends BaseAdapter {
         }
 
         ShowListCharacter c=(ShowListCharacter) getItem(position);
+        DBItems item = dbHelper.readItem(String.valueOf(c.getmId()));
+
 
         viewHolder.textViewItem.setText(c.getmName());
         //viewHolder.checkBoxItem.setChecked(c.ismCheck());
@@ -81,7 +87,7 @@ public class ShowListCustomAdapter extends BaseAdapter {
 
         //Log.d("text","pocetak()"+c.getmName().toString());
         //Log.d("text","pocetak()"+c.ismCheck());
-        if(c.ismCheck())
+        if(item.ismItemChecked())
         {
             viewHolder.textViewItem.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
             c.setmCheck(true);
@@ -95,6 +101,8 @@ public class ShowListCustomAdapter extends BaseAdapter {
             //Log.d("text","else pre vh()"+c.getmName().toString());
             //Log.d("text","els epre vh()"+c.ismCheck());
         }
+        viewHolder.textViewItem.setText(item.getmItemName());
+        viewHolder.checkBoxItem.setChecked(item.ismItemChecked());
         //Log.d("text","van posle()"+c.getmName().toString());
         //Log.d("text","van posle()"+c.ismCheck());
 
@@ -119,13 +127,14 @@ public class ShowListCustomAdapter extends BaseAdapter {
         viewHolder.checkBoxItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(viewHolder.checkBoxItem.isChecked())
+                /*if(viewHolder.checkBoxItem.isChecked())
                 {
                     viewHolder.textViewItem.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
                     viewHolder.checkBoxItem.setChecked(true);
                     c.setmCheck(true);
                     //Log.d("text","viewh petlja if"+c.getmName().toString());
                     //Log.d("text","viewh petlja if"+c.ismCheck());
+
 
                 }
                 else {
@@ -134,7 +143,20 @@ public class ShowListCustomAdapter extends BaseAdapter {
                     //Log.d("text","viewh petlja else"+c.getmName().toString());
                     //Log.d("text","viewh petlja else"+c.ismCheck());
                     c.setmCheck(false);
+                }*/
+
+                if (viewHolder.checkBoxItem.isChecked()) {
+                    viewHolder.textViewItem.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+                    viewHolder.textViewItem.setBackgroundColor(Color.parseColor("#ffe6ed"));
+                    c.setmCheck(true);
+                    dbHelper.updateItem(new DBItems(c.getmName(), c.getBelonging(), c.ismCheck(), c.getmId()));
+                } else {
+                    viewHolder.textViewItem.setPaintFlags(Paint.ANTI_ALIAS_FLAG);
+                    viewHolder.textViewItem.setBackgroundColor(Color.parseColor("#FFFFFFFF"));
+                    c.setmCheck(false);
+                    dbHelper.updateItem(new DBItems(c.getmName(), c.getBelonging(), c.ismCheck(), c.getmId()));
                 }
+
             }
         });
         return convertView;

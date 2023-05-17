@@ -48,7 +48,7 @@ CustomAdapter adapter;
             tv1.append("/");
         }
 
-        DBLists[] lists = dbHelper.readLists();
+        /*DBLists[] lists = dbHelper.readLists();
         if(lists != null) {
             for (DBLists list : lists) {
                 if (list.getmListCreator().equals(value) && !list.getmListShared()) {
@@ -58,7 +58,15 @@ CustomAdapter adapter;
                     adapter.addCharacter(new Character(list.getmListName(), list.getmListShared()));
                 }
             }
+        }*/
+        DBLists[] lists= dbHelper.readList1();
+        if(lists != null) {
+            for(DBLists list:lists)
+            {
+                adapter.addCharacter(new Character(list.getmListName(), list.getmListShared()));
+            }
         }
+
 
         lista.setAdapter(adapter);
 

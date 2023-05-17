@@ -45,7 +45,7 @@ public class ShowListActivity extends AppCompatActivity implements View.OnClickL
 
         Button button=findViewById(R.id.add_button);
         lista=findViewById(R.id.showlist_lista);
-        EditText editText=findViewById(R.id.input_task_name);
+        editText=findViewById(R.id.input_task_name);
 
         ShowListCustomAdapter adapter=new ShowListCustomAdapter(this);
         lista.setAdapter(adapter);
